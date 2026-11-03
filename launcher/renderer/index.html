@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https://mc-heads.net; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'">
+  <title>Rainy Launcher</title>
+  <link rel="icon" href="img/favicon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="rain"></canvas>
+  <div class="glow"></div>
+
+  <header class="titlebar">
+    <div class="brand">
+      <span class="logo-mini"></span>
+      <span>RAINY LAUNCHER</span>
+    </div>
+    <div class="win-buttons">
+      <button id="btn-min" title="Minimalizovat" aria-label="Minimalizovat">
+        <svg viewBox="0 0 12 12"><path d="M2 6h8" /></svg>
+      </button>
+      <button id="btn-close" class="close" title="Zavřít" aria-label="Zavřít">
+        <svg viewBox="0 0 12 12"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7" /></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="app">
+    <nav class="sidebar">
+      <button class="nav-item active" data-page="play">
+        <svg viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z" /></svg>
+        <span>Hrát</span>
+      </button>
+      <button class="nav-item" data-page="mods">
+        <svg viewBox="0 0 24 24"><path d="M4 7l8-4 8 4-8 4zM4 12l8 4 8-4M4 17l8 4 8-4" /></svg>
+        <span>Mody</span>
+      </button>
+      <button class="nav-item" data-page="settings">
+        <svg viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0" /><circle cx="16" cy="6" r="2" /><circle cx="10" cy="12" r="2" /><circle cx="18" cy="18" r="2" /></svg>
+        <span>Nastavení</span>
+      </button>
+
+      <div class="account" id="account"></div>
+    </nav>
+
+    <main>
+      <!-- HRÁT -->
+      <section class="page active" id="page-play">
+        <div class="hero">
+          <div class="hero-text">
+            <p class="eyebrow" id="eyebrow">Minecraft 26.3 · Fabric</p>
+            <h1>RAINY<span>CLIENT</span></h1>
+            <p class="tagline">Čistý PvP client. Víc FPS, přehledný HUD, žádný bordel.</p>
+            <ul class="features">
+              <li>Zoom</li><li>Keystrokes</li><li>Armor Status</li><li>Shulker Preview</li><li>Neviditelné sklo</li><li>Potato Graphics</li><li>FPS test</li>
+            </ul>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <div class="drop"></div>
+          </div>
+        </div>
+
+        <div class="playbar glass">
+          <div class="playinfo">
+            <div class="playinfo-title" id="mods-count">Načítám</div>
+            <div class="playinfo-sub" id="mode-hint"></div>
+          </div>
+          <button class="play" id="btn-play">
+            <span id="play-label">HRÁT</span>
+          </button>
+          <div class="progress" id="progress" hidden>
+            <div class="progress-row">
+              <span id="progress-stage">Připravuju</span>
+              <span id="progress-num"></span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="bar-fill"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MODY -->
+      <section class="page" id="page-mods">
+        <div class="page-head">
+          <h2>Mody</h2>
+          <p>Zapni si, co chceš. Změny se projeví při dalším spuštění.</p>
+        </div>
+        <div class="mod-groups" id="mod-groups"></div>
+      </section>
+
+      <!-- NASTAVENÍ -->
+      <section class="page" id="page-settings">
+        <div class="page-head">
+          <h2>Nastavení</h2>
+          <p>RAM, složky a přihlášení.</p>
+        </div>
+
+        <div class="settings-grid">
+          <div class="card glass">
+            <div class="card-title">Paměť pro hru</div>
+            <div class="ram-row">
+              <input type="range" id="ram" min="2" max="16" step="1">
+              <div class="ram-value"><span id="ram-value">4</span> GB</div>
+            </div>
+            <p class="hint" id="ram-hint">Doporučeno 4 GB. Víc než polovinu RAM nedávej.</p>
+          </div>
+
+          <div class="card glass">
+            <div class="card-title">Launcher</div>
+            <label class="row-toggle">
+              <span>
+                <b>Schovat launcher, když hra běží</b>
+                <small>Po zavření hry se zase ukáže.</small>
+              </span>
+              <input type="checkbox" class="switch" id="hide-on-launch">
+            </label>
+          </div>
+
+          <div class="card glass">
+            <div class="card-title">Složky</div>
+            <div class="button-row">
+              <button class="btn" data-open="game">Složka hry</button>
+              <button class="btn" data-open="mods">Mody</button>
+              <button class="btn" data-open="logs">Logy</button>
+            </div>
+            <p class="hint">Světy, screenshoty a resource packy najdeš ve složce hry.</p>
+          </div>
+
+          <div class="card glass">
+            <div class="card-title">Microsoft přihlášení</div>
+            <input type="text" class="input" id="client-id" placeholder="Client ID z Azure (až bude schválené)" spellcheck="false" autocomplete="off">
+            <p class="hint" id="client-hint">Dokud tu nic není, hra se spouští přes normální Minecraft Launcher.</p>
+          </div>
+        </div>
+        <p class="version-line" id="version-line"></p>
+      </section>
+    </main>
+  </div>
+
+  <div class="toasts" id="toasts"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+{
+  "minecraft": "26.3",
+  "fabricLoader": "0.20.1",
+  "azureClientId": "",
+  "mods": [
+    {
+      "id": "rainy-client",
+      "name": "Rainy Client",
+      "description": "HUD, zoom, srdíčka, keystrokes a všechno ostatní.",
+      "bundled": "rainy-client.jar",
+      "required": true
+    },
+    {
+      "id": "fabric-api",
+      "name": "Fabric API",
+      "description": "Základ, bez kterého mody nejedou.",
+      "modrinth": "fabric-api",
+      "version": "0.165.0+26.3",
+      "required": true
+    },
+    {
+      "id": "sodium",
+      "name": "Sodium",
+      "description": "Nový renderer, hodně FPS navíc.",
+      "modrinth": "sodium",
+      "version": "mc26.3-0.9.2-fabric",
+      "group": "fps"
+    },
+    {
+      "id": "sodium-extra",
+      "name": "Sodium Extra",
+      "description": "Další nastavení grafiky pro Sodium.",
+      "modrinth": "sodium-extra",
+      "version": "mc26.3-0.9.5+fabric",
+      "group": "fps",
+      "needs": [
+        "sodium"
+      ]
+    },
+    {
+      "id": "lithium",
+      "name": "Lithium",
+      "description": "Rychlejší logika hry.",
+      "modrinth": "lithium",
+      "version": "mc26.3-0.26.3-fabric",
+      "group": "fps"
+    },
+    {
+      "id": "immediatelyfast",
+      "name": "ImmediatelyFast",
+      "description": "Rychlejší HUD, text a itemy.",
+      "modrinth": "immediatelyfast",
+      "version": "1.17.1+26.3-fabric",
+      "group": "fps"
+    },
+    {
+      "id": "entityculling",
+      "name": "Entity Culling",
+      "description": "Nekreslí moby a truhly schované za zdí.",
+      "modrinth": "entityculling",
+      "version": "X1g3VhTx",
+      "group": "fps"
+    },
+    {
+      "id": "ferrite-core",
+      "name": "FerriteCore",
+      "description": "Hra bere míň RAM.",
+      "modrinth": "ferrite-core",
+      "version": "9.0.0-fabric",
+      "group": "fps"
+    },
+    {
+      "id": "dynamic-fps",
+      "name": "Dynamic FPS",
+      "description": "Šetří PC, když hra není v popředí.",
+      "modrinth": "dynamic-fps",
+      "version": "Jwq069rR",
+      "group": "fps"
+    },
+    {
+      "id": "moreculling",
+      "name": "More Culling",
+      "description": "Nekreslí schované strany bloků a listí.",
+      "modrinth": "moreculling",
+      "version": "5jIORlSK",
+      "group": "fps",
+      "deps": [
+        "cloth-config"
+      ]
+    },
+    {
+      "id": "better-block-entities",
+      "name": "Better Block Entities",
+      "description": "Truhly, shulkery a cedule se kreslí mnohem rychleji.",
+      "modrinth": "better-block-entities",
+      "version": "9VvhfLcA",
+      "group": "fps",
+      "needs": [
+        "sodium"
+      ]
+    },
+    {
+      "id": "badoptimizations",
+      "name": "BadOptimizations",
+      "description": "Zrychlí věci mimo kreslení (světlo, počasí, mapy).",
+      "modrinth": "badoptimizations",
+      "version": "Sp0ctspw",
+      "group": "fps"
+    },
+    {
+      "id": "krypton",
+      "name": "Krypton",
+      "description": "Rychlejší síť, méně zátěže na serverech.",
+      "modrinth": "krypton",
+      "version": "UugdIYJw",
+      "group": "fps"
+    },
+    {
+      "id": "simple-voice-chat",
+      "name": "Simple Voice Chat",
+      "description": "Mikrofon ve hře (server ho musí mít taky).",
+      "modrinth": "simple-voice-chat",
+      "version": "fabric-2.6.27+26.3",
+      "group": "extra"
+    },
+    {
+      "id": "cloth-config",
+      "name": "Cloth Config",
+      "description": "Knihovna pro More Culling.",
+      "modrinth": "cloth-config",
+      "version": "fg2uyxOW",
+      "library": true
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+plugins {
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+}
+
+repositories {
+	// Modrinth: odsud se stahují další mody (Simple Voice Chat)
+	exclusiveContent {
+		forRepository {
+			maven {
+				name = "Modrinth"
+				url = "https://api.modrinth.com/maven"
+			}
+		}
+		filter {
+			includeGroup "maven.modrinth"
+		}
+	}
+}
+
+loom {
+	splitEnvironmentSourceSets()
+
+	mods {
+		"rainy-client" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+	// Simple Voice Chat: mluvení přes mikrofon ve hře (musí ho mít i server)
+	runtimeOnly "maven.modrinth:simple-voice-chat:${project.voicechat_version}"
+
+	// FPS mody (Modrinth). Verze jsou v gradle.properties.
+	runtimeOnly "maven.modrinth:sodium:${project.sodium_version}"                   // nový renderer = hodně FPS
+	runtimeOnly "maven.modrinth:sodium-extra:${project.sodium_extra_version}"       // další nastavení pro Sodium
+	runtimeOnly "maven.modrinth:lithium:${project.lithium_version}"                 // rychlejší logika hry
+	runtimeOnly "maven.modrinth:immediatelyfast:${project.immediatelyfast_version}" // rychlejší HUD, text a itemy
+	runtimeOnly "maven.modrinth:entityculling:${project.entityculling_version}"     // nekreslí moby a truhly za zdí
+	runtimeOnly "maven.modrinth:ferrite-core:${project.ferritecore_version}"        // méně RAM
+	runtimeOnly "maven.modrinth:dynamic-fps:${project.dynamicfps_version}"          // šetří PC, když hra není v popředí
+	runtimeOnly "maven.modrinth:moreculling:${project.moreculling_version}"         // nekreslí schované strany bloků a listí
+	runtimeOnly "maven.modrinth:cloth-config:${project.cloth_config_version}"       // knihovna pro More Culling
+	runtimeOnly "maven.modrinth:better-block-entities:${project.bbe_version}"       // truhly, shulkery a cedule rychleji (se Sodiem)
+	runtimeOnly "maven.modrinth:badoptimizations:${project.badoptimizations_version}" // optimalizace mimo kreslení
+	runtimeOnly "maven.modrinth:krypton:${project.krypton_version}"                 // rychlejší síť
+}
+
+processResources {
+	def version = project.version
+	inputs.property "version", version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 25
+	it.options.encoding = "UTF-8"
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+}
+
+jar {
+	def projectName = project.name
+	inputs.property "projectName", projectName
+
+	from("LICENSE") {
+		rename { "${it}_$projectName" }
+	}
+}

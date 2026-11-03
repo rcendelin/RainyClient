@@ -1,0 +1,22 @@
+{
+	"required": true,
+	"package": "cz.nebixy.rainy.client.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"client": [
+		"LightmapMixin",
+		"HealthTagMixin",
+		"TabListMixin",
+		"PingMixin",
+		"ShulkerTooltipMixin",
+		"ContainerTooltipMixin",
+		"CameraFovMixin",
+		"MouseScrollMixin",
+		"ClearGlassMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}

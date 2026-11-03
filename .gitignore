@@ -1,0 +1,13 @@
+# Gradle / IntelliJ
+.gradle/
+build/
+!launcher/build/
+run/
+out/
+.idea/
+*.iml
+
+# Launcher
+launcher/node_modules/
+launcher/dist/
+launcher/bundled/*.jar

@@ -1,0 +1,43 @@
+{
+	"schemaVersion": 1,
+	"id": "rainy-client",
+	"version": "${version}",
+	"name": "Rainy Client",
+	"description": "Přehledný PvP client: HUD moduly, zoom, toggle sprint a FPS boost.",
+	"authors": [
+		"NEBIXY"
+	],
+	"license": "All-Rights-Reserved",
+	"icon": "assets/rainy-client/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"main": [
+			"cz.nebixy.rainy.RainyClient"
+		],
+		"client": [
+			"cz.nebixy.rainy.client.RainyClientClient"
+		]
+	},
+	"mixins": [
+		{
+			"config": "rainy-client.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.20.1",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"sodium": "*",
+		"sodium-extra": "*",
+		"lithium": "*",
+		"immediatelyfast": "*",
+		"entityculling": "*",
+		"ferritecore": "*",
+		"dynamic_fps": "*",
+		"voicechat": "*"
+	}
+}
