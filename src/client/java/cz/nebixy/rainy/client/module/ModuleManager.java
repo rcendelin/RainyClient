@@ -54,6 +54,7 @@ public final class ModuleManager {
 		fullbright = add(new FullbrightModule());
 		add(new ClearGlassModule());
 		add(new ShulkerPreviewModule());
+		add(new MapPreviewModule());
 		add(new RainyBadgeSetting());
 
 		// FPS: výkon

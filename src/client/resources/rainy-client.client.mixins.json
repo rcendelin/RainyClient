@@ -11,7 +11,8 @@
 		"ContainerTooltipMixin",
 		"CameraFovMixin",
 		"MouseScrollMixin",
-		"ClearGlassMixin"
+		"ClearGlassMixin",
+		"MapTooltipMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -24,6 +24,7 @@ import net.fabricmc.fabric.api.client.screen.v1.Screens;
 
 import cz.nebixy.rainy.RainyClient;
 import cz.nebixy.rainy.client.gui.HudEditorScreen;
+import cz.nebixy.rainy.client.gui.MapTooltip;
 import cz.nebixy.rainy.client.gui.RainyScreen;
 import cz.nebixy.rainy.client.gui.ShulkerTooltip;
 import cz.nebixy.rainy.client.hud.HudModule;
@@ -61,8 +62,16 @@ public class RainyClientClient implements ClientModInitializer {
 		HudElementRegistry.replaceElement(VanillaHudElements.MOB_EFFECTS,
 				original -> (g, deltaTracker) -> PotionTimerModule.render(g, deltaTracker, original));
 
-		// Shulker Preview: náš obrázek v tooltipu se kreslí přes ShulkerTooltip
-		ClientTooltipComponentCallback.EVENT.register(data -> data instanceof ShulkerTooltip.Data d ? new ShulkerTooltip(d) : null);
+		// Shulker Preview a Map Preview: naše obrázky v tooltipu
+		ClientTooltipComponentCallback.EVENT.register(data -> {
+			if (data instanceof ShulkerTooltip.Data d) {
+				return new ShulkerTooltip(d);
+			}
+			if (data instanceof MapTooltip.Data d) {
+				return new MapTooltip(d);
+			}
+			return null;
+		});
 
 		// Nápis na hlavní obrazovce + tlačítko Rainy Settings v ESC menu
 		ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
