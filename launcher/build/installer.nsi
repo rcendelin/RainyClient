@@ -4,7 +4,7 @@
 Unicode true
 !include "MUI2.nsh"
 
-Name "Rainy Launcher"
+Name "Rainy Launcher ${VERSION}"
 OutFile "${OUT}"
 InstallDir "$LOCALAPPDATA\Programs\Rainy Launcher"
 RequestExecutionLevel user

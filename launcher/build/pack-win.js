@@ -38,6 +38,13 @@ function setExeIcon(exe) {
 }
 
 (async () => {
+  // Kontrola: Rainy jar musí mít fabric.mod.json, jinak ho Fabric nenačte
+  const jar = path.join(ROOT, 'bundled', 'rainy-client.jar');
+  const list = execFileSync('unzip', ['-Z1', jar]).toString().split('\n');
+  for (const need of ['fabric.mod.json', 'rainy-client.client.mixins.json']) {
+    if (!list.includes(need)) throw new Error(`bundled/rainy-client.jar nemá ${need}`);
+  }
+
   const out = path.join(ROOT, 'dist');
   const [appDir] = await packager({
     dir: ROOT,
