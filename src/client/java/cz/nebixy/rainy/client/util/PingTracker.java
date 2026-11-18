@@ -23,7 +23,9 @@ public final class PingTracker {
 	/** Volá se každý tick, když je zapnutý Ping HUD. */
 	public static void tick(Minecraft mc) {
 		if (mc.player == null) {
-			SAMPLES.clear();
+			synchronized (SAMPLES) {
+				SAMPLES.clear();
+			}
 			return;
 		}
 		if (++ticks >= INTERVAL_TICKS) {

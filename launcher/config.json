@@ -15,7 +15,7 @@
       "name": "Fabric API",
       "description": "Základ, bez kterého mody nejedou.",
       "modrinth": "fabric-api",
-      "version": "0.165.0+26.3",
+      "version": "0.166.2+26.3",
       "required": true
     },
     {

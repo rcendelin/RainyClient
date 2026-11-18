@@ -36,6 +36,6 @@ Viz [`launcher/README.md`](launcher/README.md). Krátce: `gradlew build`, jar z 
 
 ## Technika
 
-- Minecraft 26.3, Fabric Loader 0.20.1, Fabric API 0.165.0, Java 25
+- Minecraft 26.3, Fabric Loader 0.20.1, Fabric API 0.166.2, Java 25
 - Mody pro launcher se stahují z Modrinthu (`launcher/config.json`)
 - Přihlášení Microsoft v launcheru čeká na schválení aplikace od Microsoftu. Do té doby se hra spouští přes normální Minecraft Launcher (profil Rainy Client). Postup na Azure: [`docs/runbook-azure.md`](docs/runbook-azure.md).

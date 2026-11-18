@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 
 import net.minecraft.client.Minecraft;
 
+import cz.nebixy.rainy.client.RainyConfig;
 import cz.nebixy.rainy.client.RainyKeys;
 import cz.nebixy.rainy.client.util.Compat;
 
@@ -28,6 +29,8 @@ public class ZoomModule extends Module {
 	private boolean sensitivityApplied;
 	private float sensitivityZoom;
 	private Object savedSensitivity;
+	/** Citlivost, kterou je potřeba vrátit, protože hra minule spadla během zoomu. */
+	private Double pendingRestore;
 
 	public ZoomModule() {
 		super("zoom", "Zoom", "Drž C, plynule přiblíží. Kolečkem víc nebo míň.", Category.PVP, true);
@@ -70,6 +73,11 @@ public class ZoomModule extends Module {
 
 	@Override
 	public void onTick(Minecraft mc) {
+		if (pendingRestore != null && mc.options != null) {
+			Compat.setOption("sensitivity", pendingRestore);
+			pendingRestore = null;
+			RainyConfig.save();
+		}
 		boolean held = held();
 		if (held && (!sensitivityApplied || sensitivityZoom != zoomLevel)) {
 			applySensitivity();
@@ -89,8 +97,12 @@ public class ZoomModule extends Module {
 			double scaled = f / Math.cbrt(zoomLevel);
 			Compat.setOption("sensitivity", Math.max(0.0, Math.min(1.0, (scaled - 0.2) / 0.6)));
 		}
+		boolean first = !sensitivityApplied;
 		sensitivityApplied = true;
 		sensitivityZoom = zoomLevel;
+		if (first) {
+			RainyConfig.save(); // zapíše původní citlivost, kdyby hra během zoomu spadla
+		}
 	}
 
 	private void restoreSensitivity() {
@@ -99,6 +111,7 @@ public class ZoomModule extends Module {
 		}
 		sensitivityApplied = false;
 		savedSensitivity = null;
+		RainyConfig.save();
 	}
 
 	/** Vrátí citlivost, když se hra vypíná uprostřed zoomu. */
@@ -118,6 +131,9 @@ public class ZoomModule extends Module {
 	public void save(JsonObject json) {
 		super.save(json);
 		json.addProperty("level", zoomLevel);
+		if (sensitivityApplied && savedSensitivity instanceof Double d) {
+			json.addProperty("restoreSensitivity", d);
+		}
 	}
 
 	@Override
@@ -126,5 +142,6 @@ public class ZoomModule extends Module {
 		if (json.has("level")) {
 			zoomLevel = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, json.get("level").getAsFloat()));
 		}
+		pendingRestore = json.has("restoreSensitivity") ? json.get("restoreSensitivity").getAsDouble() : null;
 	}
 }

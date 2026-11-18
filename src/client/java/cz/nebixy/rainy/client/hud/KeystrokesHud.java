@@ -40,13 +40,13 @@ public class KeystrokesHud extends HudModule {
 		int full = KEY * 3 + GAP * 2;
 		int half = (full - GAP) / 2;
 
-		// W
-		key(g, x + KEY + GAP, y, KEY, KEY, "W", null, glow[0]);
+		// W (nebo co má hráč nastavené)
+		key(g, x + KEY + GAP, y, KEY, KEY, label(o.keyUp, "W"), null, glow[0]);
 		// A S D
 		int row2 = y + KEY + GAP;
-		key(g, x, row2, KEY, KEY, "A", null, glow[1]);
-		key(g, x + KEY + GAP, row2, KEY, KEY, "S", null, glow[2]);
-		key(g, x + (KEY + GAP) * 2, row2, KEY, KEY, "D", null, glow[3]);
+		key(g, x, row2, KEY, KEY, label(o.keyLeft, "A"), null, glow[1]);
+		key(g, x + KEY + GAP, row2, KEY, KEY, label(o.keyDown, "S"), null, glow[2]);
+		key(g, x + (KEY + GAP) * 2, row2, KEY, KEY, label(o.keyRight, "D"), null, glow[3]);
 		// LMB RMB
 		int row3 = row2 + KEY + GAP;
 		int lc = InputTracker.leftCps();
@@ -61,6 +61,15 @@ public class KeystrokesHud extends HudModule {
 		g.fill(x + full / 2 - 10, row4 + 4, x + full / 2 + 10, row4 + 5, barColor);
 
 		return new int[]{full, row4 + spaceH - y};
+	}
+
+	/** Krátký název klávesy (max 3 znaky, ať se vejde do políčka). */
+	private static String label(KeyMapping mapping, String fallback) {
+		String name = mapping.getTranslatedKeyMessage().getString().trim();
+		if (name.isEmpty()) {
+			return fallback;
+		}
+		return name.length() <= 3 ? name.toUpperCase() : name.substring(0, 3).toUpperCase();
 	}
 
 	private void key(GuiGraphicsExtractor g, int x, int y, int w, int h, String label, String sub, float glow) {
