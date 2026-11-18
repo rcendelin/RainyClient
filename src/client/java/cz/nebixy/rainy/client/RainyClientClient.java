@@ -11,6 +11,7 @@ import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.Identifier;
 
 import net.fabricmc.api.ClientModInitializer;
@@ -27,6 +28,7 @@ import cz.nebixy.rainy.client.gui.HudEditorScreen;
 import cz.nebixy.rainy.client.gui.MapTooltip;
 import cz.nebixy.rainy.client.gui.RainyScreen;
 import cz.nebixy.rainy.client.gui.ShulkerTooltip;
+import cz.nebixy.rainy.client.gui.UnderConstructionScreen;
 import cz.nebixy.rainy.client.hud.HudModule;
 import cz.nebixy.rainy.client.hud.Notification;
 import cz.nebixy.rainy.client.module.FpsTestModule;
@@ -116,7 +118,9 @@ public class RainyClientClient implements ClientModInitializer {
 	}
 
 	/**
-	 * Přidá do ESC menu tlačítko "Rainy Settings" pod poslední tlačítko Minecraftu.
+	 * ESC menu jako v Lunaru: místo "Poslat zpětnou vazbu" je "Rainy Settings"
+	 * a místo "Nahlásit chyby" je "Rainy" (stránka Under Construction).
+	 * Když tam ta tlačítka nejsou, přidá se Rainy Settings pod poslední tlačítko.
 	 */
 	private static void addPauseButton(Minecraft client, Screen screen) {
 		List<AbstractWidget> widgets = Screens.getWidgets(screen);
@@ -124,21 +128,31 @@ public class RainyClientClient implements ClientModInitializer {
 			return; // ESC menu bez tlačítek (F3 + Esc)
 		}
 
+		AbstractWidget feedback = find(widgets, "menu.sendFeedback");
+		AbstractWidget bugs = find(widgets, "menu.reportBugs");
+		if (feedback != null) {
+			replace(widgets, feedback, Button.builder(Component.literal("Rainy Settings"),
+					button -> client.gui.setScreen(new RainyScreen(screen))));
+			if (bugs != null) {
+				replace(widgets, bugs, Button.builder(Component.literal("Rainy"),
+						button -> client.gui.setScreen(new UnderConstructionScreen(screen))));
+			}
+			return;
+		}
+
+		// Záloha: pod poslední tlačítko Minecraftu
 		int centerX = screen.width / 2;
 		int bottom = -1;
-		int width = 204;
 		for (AbstractWidget w : widgets) {
 			int wCenter = w.getX() + w.getWidth() / 2;
 			if (Math.abs(wCenter - centerX) <= 110 && w.getY() + w.getHeight() > bottom) {
 				bottom = w.getY() + w.getHeight();
-				width = Math.max(98, Math.min(204, w.getWidth()));
 			}
 		}
-
+		int width = 204;
 		int x;
 		int y;
 		if (bottom > 0 && bottom + 4 + 20 <= screen.height - 4) {
-			width = 204;
 			x = centerX - width / 2;
 			y = bottom + 4;
 		} else {
@@ -146,11 +160,28 @@ public class RainyClientClient implements ClientModInitializer {
 			x = 4;
 			y = 4;
 		}
-
 		widgets.add(Button.builder(Component.literal("Rainy Settings"),
 				button -> client.gui.setScreen(new RainyScreen(screen)))
 				.bounds(x, y, width, 20)
 				.build());
+	}
+
+	/** Najde tlačítko podle překladového klíče jeho textu (funguje v každém jazyce). */
+	private static AbstractWidget find(List<AbstractWidget> widgets, String key) {
+		for (AbstractWidget w : widgets) {
+			if (w.getMessage().getContents() instanceof TranslatableContents tc && key.equals(tc.getKey())) {
+				return w;
+			}
+		}
+		return null;
+	}
+
+	/** Nahradí tlačítko novým na stejném místě a ve stejné velikosti. */
+	private static void replace(List<AbstractWidget> widgets, AbstractWidget old, Button.Builder builder) {
+		int index = widgets.indexOf(old);
+		Button button = builder.bounds(old.getX(), old.getY(), old.getWidth(), old.getHeight()).build();
+		widgets.remove(index);
+		widgets.add(index, button);
 	}
 
 	private static void renderTitleBadge(GuiGraphicsExtractor g) {

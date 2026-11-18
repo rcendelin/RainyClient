@@ -12,7 +12,8 @@
 		"CameraFovMixin",
 		"MouseScrollMixin",
 		"ClearGlassMixin",
-		"MapTooltipMixin"
+		"MapTooltipMixin",
+		"LowFireMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

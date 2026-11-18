@@ -33,6 +33,8 @@ public final class ModuleManager {
 
 	public static ZoomModule zoom;
 	public static FullbrightModule fullbright;
+	/** Low Fire z PvP Style (čte LowFireMixin). */
+	public static volatile boolean lowFire;
 
 	public static void init() {
 		// HUD: info na obrazovce
@@ -49,6 +51,16 @@ public final class ModuleManager {
 		add(new ToggleSprintModule());
 		zoom = add(new ZoomModule());
 		add(new HealthTagsModule());
+		PvpStyleModule pvp = add(new PvpStyleModule());
+		PvpOption[] lowFireRef = new PvpOption[1];
+		lowFireRef[0] = add(pvp.add(new PvpOption(pvp, "low_fire", "Low Fire", "Oheň před očima je níž a nezakrývá výhled.",
+				() -> lowFire = lowFireRef[0].isEnabled())));
+		add(pvp.add(new PvpOption(pvp, "no_hurt_cam", "Bez třesení při zásahu", "Kamera se při zásahu nehne.", "damageTiltStrength", 0.0)));
+		add(pvp.add(new PvpOption(pvp, "no_fov_effects", "Bez FOV efektů", "Sprint a Speed nemění přiblížení obrazu.", "fovEffectScale", 0.0)));
+		add(pvp.add(new PvpOption(pvp, "no_bobbing", "Bez houpání kamery", "Obraz se při chůzi nehoupe.", "bobView", false)));
+		add(pvp.add(new PvpOption(pvp, "no_screen_effects", "Bez efektů obrazovky", "Žádné vlnění od nevolnosti a portálu.", "screenEffectScale", 0.0)));
+		add(pvp.add(new PvpOption(pvp, "no_darkness", "Bez tmy od Wardena", "Efekt Darkness obrazovku neztmaví.", "darknessEffectScale", 0.0)));
+		add(pvp.add(new PvpOption(pvp, "no_lightning", "Bez záblesků blesku", "Blesk neoslní obrazovku.", "hideLightningFlash", true)));
 
 		// Vizuál: jak hra vypadá
 		fullbright = add(new FullbrightModule());
@@ -89,14 +101,30 @@ public final class ModuleManager {
 		return Collections.unmodifiableList(HUD);
 	}
 
+	/** Moduly v kategorii, jak se ukazují v menu (možnosti PvP Style jen když je rozbalený). */
 	public static List<Module> byCategory(Category category) {
 		List<Module> list = new ArrayList<>();
 		for (Module m : MODULES) {
-			if (m.category == category) {
-				list.add(m);
+			if (m.category != category) {
+				continue;
 			}
+			if (m instanceof PvpOption o && !o.parent.expanded) {
+				continue;
+			}
+			list.add(m);
 		}
 		return list;
+	}
+
+	/** Počet modulů v kategorii (bez jednotlivých možností PvP Style). */
+	public static int count(Category category) {
+		int n = 0;
+		for (Module m : MODULES) {
+			if (m.category == category && !(m instanceof PvpOption)) {
+				n++;
+			}
+		}
+		return n;
 	}
 
 	public static void tick(Minecraft mc) {

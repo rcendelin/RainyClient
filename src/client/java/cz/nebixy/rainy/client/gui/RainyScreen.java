@@ -17,6 +17,7 @@ import cz.nebixy.rainy.client.module.Category;
 import cz.nebixy.rainy.client.module.KeySetting;
 import cz.nebixy.rainy.client.module.Module;
 import cz.nebixy.rainy.client.module.ModuleManager;
+import cz.nebixy.rainy.client.module.PvpOption;
 import cz.nebixy.rainy.client.util.Draw;
 import cz.nebixy.rainy.client.util.Keys;
 import cz.nebixy.rainy.client.util.Theme;
@@ -145,7 +146,7 @@ public class RainyScreen extends Screen {
 			}
 			Draw.flat(g, c.title, px + 14, y + 6, active ? Theme.TEXT : Theme.TEXT_DIM);
 			// počet modulů v kategorii, vpravo
-			String count = String.valueOf(ModuleManager.byCategory(c).size());
+			String count = String.valueOf(ModuleManager.count(c));
 			Draw.flat(g, count, px + SIDEBAR_W - 12 - Draw.width(count), y + 6, active ? Theme.accent() : 0xFF6B7789);
 			y += 23;
 		}
@@ -205,6 +206,11 @@ public class RainyScreen extends Screen {
 
 	private void renderRow(GuiGraphicsExtractor g, Module m, int x1, int y1, int x2, int y2, boolean mouseInList, int mouseX, int mouseY) {
 		boolean hover = mouseInList && Draw.inside(mouseX, mouseY, x1, y1, x2, y2);
+		if (m instanceof PvpOption) {
+			// Možnost PvP Style: odsazená pod hlavním řádkem
+			g.fill(x1 + 4, y1 - GAP, x1 + 5, y2, Theme.accent(90));
+			x1 += 10;
+		}
 		Draw.rect(g, x1, y1, x2, y2, hover ? Theme.CARD_HOVER : Theme.CARD, 3);
 
 		float target = m.isEnabled() ? 1f : 0f;
