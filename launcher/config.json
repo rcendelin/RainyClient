@@ -124,6 +124,14 @@
       "group": "extra"
     },
     {
+      "id": "replaymod",
+      "name": "Replay Mod",
+      "description": "Nahrává hru, pak si ji pustíš z libovolné kamery a uděláš z ní video.",
+      "modrinth": "replaymod",
+      "version": "latest",
+      "group": "extra"
+    },
+    {
       "id": "cloth-config",
       "name": "Cloth Config",
       "description": "Knihovna pro More Culling.",

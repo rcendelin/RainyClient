@@ -18,7 +18,8 @@ function enabledMods(config, settings) {
   for (const m of config.mods) {
     if (m.library) continue;
     const userValue = settings.mods?.[m.id];
-    if (m.required || userValue !== false) on.add(m.id);
+    const byDefault = m.default !== false;
+    if (m.required || userValue === true || (userValue === undefined && byDefault)) on.add(m.id);
   }
   // Sodium Extra bez Sodia nejede
   for (const id of [...on]) {
@@ -33,12 +34,21 @@ function enabledMods(config, settings) {
   return config.mods.filter((m) => on.has(m.id));
 }
 
-async function resolveModrinth(mod) {
-  const cacheFile = path.join(paths.cache, 'mods', `${mod.modrinth}@${mod.version}.json`.replace(/[^\w.@+-]/g, '_'));
-  const v = await net.fetchJsonCached(
-    `${MODRINTH}/project/${encodeURIComponent(mod.modrinth)}/version/${encodeURIComponent(mod.version)}`,
-    cacheFile,
-  );
+async function resolveModrinth(mod, mcVersion) {
+  const cacheFile = path.join(paths.cache, 'mods', `${mod.modrinth}@${mod.version}@${mcVersion}.json`.replace(/[^\w.@+-]/g, '_'));
+  let v;
+  if (mod.version === 'latest') {
+    // Nejnovější verze pro tenhle Minecraft (stabilní, když nějaká je)
+    const q = new URLSearchParams({ game_versions: JSON.stringify([mcVersion]), loaders: JSON.stringify(['fabric']) });
+    const list = await net.fetchJsonCached(`${MODRINTH}/project/${encodeURIComponent(mod.modrinth)}/version?${q}`, cacheFile);
+    v = list.find((x) => x.version_type === 'release') || list[0];
+    if (!v) throw new Error(`${mod.name} zatím nemá verzi pro Minecraft ${mcVersion}.`);
+  } else {
+    v = await net.fetchJsonCached(
+      `${MODRINTH}/project/${encodeURIComponent(mod.modrinth)}/version/${encodeURIComponent(mod.version)}`,
+      cacheFile,
+    );
+  }
   const file = v.files.find((f) => f.primary) || v.files[0];
   return { url: file.url, filename: file.filename, sha1: file.hashes.sha1, size: file.size };
 }
@@ -72,9 +82,17 @@ async function install(config, settings, { onStage, onProgress } = {}) {
       if (!same) await fsp.copyFile(src, dest);
       wanted.push(mod.bundled);
     } else if (mod.modrinth) {
-      const f = await resolveModrinth(mod);
-      tasks.push({ url: f.url, dest: path.join(modsDir, f.filename), sha1: f.sha1, size: f.size });
-      wanted.push(f.filename);
+      try {
+        const f = await resolveModrinth(mod, config.minecraft);
+        tasks.push({ url: f.url, dest: path.join(modsDir, f.filename), sha1: f.sha1, size: f.size });
+        wanted.push(f.filename);
+      } catch (e) {
+        // Povinný mod musí být, nepovinný se jen přeskočí (hra se kvůli němu nezasekne)
+        if (mod.required) throw e;
+        console.warn(`[mods] ${mod.name} přeskočen: ${e.message}`);
+        const old = managed.find((n) => n.toLowerCase().includes(mod.modrinth.split('-')[0]));
+        if (old) wanted.push(old); // stará verze zůstane
+      }
     }
   }
 
